@@ -17,7 +17,7 @@ This project is a flexible and extensible save system designed for Unity games. 
 1. Add the project files to your Unity project.
 2. Install necessary NuGet packages (e.g., `Newtonsoft.Json`).
 3. Create your own data types and listeners using the `ISave<T>` interface.
-
+4. Add your custom `SavePool` to the `SaveManager` by calling `SaveManager.LoadAllSavePools()`. 
 ## Usage
 
 ### Creating a Save Listener
@@ -76,4 +76,3 @@ To switch to JSON format, you can use the Unity Scripting Symbols. Add `SAVE_SYS
 
 You are free to use and modify this project as you wish.
 
-4. Add your custom `SavePool` to the `SaveManager` by calling `SaveManager.LoadAllSavePools()`. 
