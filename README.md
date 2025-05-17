@@ -68,6 +68,19 @@ private static void LoadAllSavePools()
 
 You can load all save pools by calling `SaveManager.LoadAllSavePools()`.
 
+## Loading Data
+
+When loading data, the `onLoaded` action in the `SavePool` is triggered. This action can be used to handle the loaded data as needed. For example:
+
+```csharp
+SavePool<MyDataType>.onLoaded += (data) => {
+    // Handle the loaded data
+    Debug.Log($"Loaded data: {data}");
+};
+```
+
+This allows you to perform custom actions whenever data is loaded from a save file.
+
 ## Switching to JSON
 
 To switch to JSON format, you can use the Unity Scripting Symbols. Add `SAVE_SYSTEM_USE_JSON` to your project's scripting symbols in Unity. This will enable JSON serialization for saving and loading data.
@@ -75,4 +88,3 @@ To switch to JSON format, you can use the Unity Scripting Symbols. Add `SAVE_SYS
 ## License
 
 You are free to use and modify this project as you wish.
-
