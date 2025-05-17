@@ -52,7 +52,6 @@ SaveManager.ChangeSaveSlot(newSlotIndex);
 - `SavePool.cs`: Pool of save listeners and bulk data management.
 - `SaveListener.cs`: Save listener that attaches to data objects.
 - `ISave.cs`: Interfaces for objects to be saved.
-- `Example.cs`: Example usage of the save system.
 
 ## SavePool Initialization
 
