@@ -132,6 +132,19 @@ namespace SaveSystem
             }
         }
 
+        public static void LoadGame(string fileName)
+        {
+            if (_dataPools.TryGetValue(fileName, out IGetSaveDataProtocol protocol))
+            {
+                _ = LoadDataAsync(fileName, protocol);
+            }
+            else
+            {
+                Debug.LogError($"No save pool found for {fileName}. Please register the save pool first.");
+            }
+        }
+
+
     }
 
 
