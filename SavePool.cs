@@ -11,7 +11,7 @@ namespace SaveSystem
     /// Save Pool is a generic class that collects all save data from listeners of type T.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    public class SavePool<T> : IGetSaveDataProtocol
+    public class SavePool<T> : ASavePool, IGetSaveDataProtocol
     {
 
         /// <summary>
@@ -19,7 +19,7 @@ namespace SaveSystem
         /// </summary>
         public static event Action<T> onLoaded = null;
 
-        public SaveCollectionBehavior saveCollectionBehaviour { get; private set; } = SaveCollectionBehavior.Auto;
+        public SaveCollectionBehavior saveCollectionBehaviour { get; private set; } = SaveCollectionBehavior.OnlyListeners;
         private Func<List<T>> _getManualData = null;
 
         private HashSet<SaveListener<T>> _saveListeners = new HashSet<SaveListener<T>>();
@@ -46,7 +46,7 @@ namespace SaveSystem
             get
             {
 
-                if (saveCollectionBehaviour != SaveCollectionBehavior.Auto)
+                if (saveCollectionBehaviour != SaveCollectionBehavior.OnlyListeners)
                 {
                     var manualdata = _getManualData?.Invoke();
 
@@ -85,6 +85,7 @@ namespace SaveSystem
 
         public void AddListener(SaveListener<T> listener) => _saveListeners.Add(listener);
         public void RemoveListener(SaveListener<T> listener) => _saveListeners.Remove(listener);
+        public override void ClearListeners() => _saveListeners.Clear();
 
 
 #if !SAVE_SYSTEM_USE_JSON
