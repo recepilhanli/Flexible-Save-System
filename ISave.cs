@@ -14,6 +14,8 @@ namespace SaveSystem
     public interface IGetSaveDataProtocol
     {
 
+        public SaveCollectionBehavior saveCollectionBehaviour { get; }
+
 #if !SAVE_SYSTEM_USE_JSON
         public byte[] GetAllSaveData();
         public void OnLoadData(byte[] data);

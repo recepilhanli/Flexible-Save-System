@@ -1,5 +1,8 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using Newtonsoft.Json;
 
 namespace SaveSystem
 {
@@ -10,34 +13,73 @@ namespace SaveSystem
     /// <typeparam name="T"></typeparam>
     public class SavePool<T> : IGetSaveDataProtocol
     {
+
         /// <summary>
         /// Event triggered when data is loaded.
         /// </summary>
         public static event Action<T> onLoaded = null;
 
+        public SaveCollectionBehavior saveCollectionBehaviour { get; private set; } = SaveCollectionBehavior.Auto;
+        private Func<List<T>> getManualData = null;
+
         private HashSet<SaveListener<T>> _saveListeners = new HashSet<SaveListener<T>>();
+
+        public SavePool(Func<List<T>> manualSave, SaveCollectionBehavior behavior)
+        {
+            this.saveCollectionBehaviour = behavior;
+            this.getManualData = manualSave;
+        }
+
+        public SavePool() { }
 
 
         /// <summary>
-        /// Creates a list of all data from the save listeners. (Don't use this frequently)
+        /// Creates a list of all data from the save listeners and manual data. 
         /// </summary>
-        private List<T> allData
+        private List<T> currentSaveData
         {
             get
             {
-                List<T> allData = new List<T>();
-                foreach (var saveListener in _saveListeners)
+
+                if (saveCollectionBehaviour != SaveCollectionBehavior.Auto)
                 {
-                    allData.Add(saveListener.saveInfo);
+                    var manualdata = getManualData?.Invoke();
+
+                    if (manualdata == null)
+                    {
+                        UnityEngine.Debug.LogError($"Manual data is null for {typeof(T).Name}. Falling back to listener data.");
+                        return GetCurrentDataFromListeners();
+                    }
+
+                    else if (saveCollectionBehaviour == SaveCollectionBehavior.AppendListeners)
+                    {
+                        var listenerdata = GetCurrentDataFromListeners();
+                        manualdata.AddRange(listenerdata);
+                    }
+
+                    return manualdata;
                 }
 
-                return allData;
+                return GetCurrentDataFromListeners();
             }
+        }
+
+
+        /// <summary>
+        /// Gets the current data from all save listeners. 
+        /// </summary>
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        public List<T> GetCurrentDataFromListeners()
+        {
+            List<T> currentData = new(_saveListeners.Count);
+            foreach (var listener in _saveListeners) currentData.Add(listener.saveInfo);
+            return currentData;
         }
 
 
         public void AddListener(SaveListener<T> listener) => _saveListeners.Add(listener);
         public void RemoveListener(SaveListener<T> listener) => _saveListeners.Remove(listener);
+        
 
 #if !SAVE_SYSTEM_USE_JSON
         public byte[] GetAllSaveData()
@@ -47,7 +89,7 @@ namespace SaveSystem
 
             using (var stream = new System.IO.MemoryStream())
             {
-                formatter.Serialize(stream, allData);
+                formatter.Serialize(stream, currentSaveData);
                 bytes = stream.ToArray();
             }
 
@@ -67,7 +109,6 @@ namespace SaveSystem
 
             foreach (var dataItem in loadedData)
             {
-                UnityEngine.Debug.Log($"Loaded data: {dataItem}");
                 onLoaded?.Invoke(dataItem);
             }
         }
@@ -97,6 +138,7 @@ namespace SaveSystem
 #endif
 
     }
+
 }
 
 
