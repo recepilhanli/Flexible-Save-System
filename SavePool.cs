@@ -122,7 +122,7 @@ namespace SaveSystem
 
 #else
 
-        public string GetAllSaveData() => JsonConvert.SerializeObject(allData, SaveManager.jsonSettings);
+        public string GetAllSaveData() => JsonConvert.SerializeObject(currentSaveData, SaveManager.jsonSettings);
 
         public void LoadData(string json)
         {
