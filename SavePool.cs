@@ -20,7 +20,7 @@ namespace SaveSystem
         public static event Action<T> onLoaded = null;
 
         public SaveCollectionBehavior saveCollectionBehaviour { get; private set; } = SaveCollectionBehavior.Auto;
-        private Func<List<T>> getManualData = null;
+        private Func<List<T>> _getManualData = null;
 
         private HashSet<SaveListener<T>> _saveListeners = new HashSet<SaveListener<T>>();
 
@@ -30,9 +30,9 @@ namespace SaveSystem
             {
                 throw new ArgumentNullException(nameof(manualSave), "Manual save function cannot be null.");
             }
-            
+
             this.saveCollectionBehaviour = behavior;
-            this.getManualData = manualSave;
+            this._getManualData = manualSave;
         }
 
         public SavePool() { }
@@ -48,7 +48,7 @@ namespace SaveSystem
 
                 if (saveCollectionBehaviour != SaveCollectionBehavior.Auto)
                 {
-                    var manualdata = getManualData?.Invoke();
+                    var manualdata = _getManualData?.Invoke();
 
                     if (manualdata == null)
                     {
