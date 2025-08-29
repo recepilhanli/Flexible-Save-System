@@ -58,8 +58,9 @@ namespace SaveSystem
 
                     else if (saveCollectionBehaviour == SaveCollectionBehavior.AppendListeners)
                     {
-                        var listenerdata = GetCurrentDataFromListeners();
-                        manualdata.AddRange(listenerdata);
+                        var combinedDataFromListeners = GetCurrentDataFromListeners();
+                        combinedDataFromListeners.AddRange(manualdata);
+                        return combinedDataFromListeners;
                     }
 
                     return manualdata;
