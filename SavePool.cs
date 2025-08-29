@@ -26,6 +26,11 @@ namespace SaveSystem
 
         public SavePool(Func<List<T>> manualSave, SaveCollectionBehavior behavior)
         {
+            if (manualSave == null)
+            {
+                throw new ArgumentNullException(nameof(manualSave), "Manual save function cannot be null.");
+            }
+            
             this.saveCollectionBehaviour = behavior;
             this.getManualData = manualSave;
         }
@@ -79,7 +84,7 @@ namespace SaveSystem
 
         public void AddListener(SaveListener<T> listener) => _saveListeners.Add(listener);
         public void RemoveListener(SaveListener<T> listener) => _saveListeners.Remove(listener);
-        
+
 
 #if !SAVE_SYSTEM_USE_JSON
         public byte[] GetAllSaveData()
